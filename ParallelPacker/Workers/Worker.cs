@@ -57,18 +57,18 @@ namespace ParallelPacker.Workers {
                     while (!token.IsCancellationRequested) {
                         TSource sourceData = sourceConveyer.Get();
                         if (Object.Equals(sourceData, default(TSource))) {
-                            logger?.Write($"{name} : completed");
+                            logger?.Debug($"{name} : worker completed");
                             break;
                         }
 
                         TDestination convertedData = convert(sourceData);
                         destinationConveyer.Put(convertedData);
-                        logger?.Write($"{name} : {sourceData.ToString()} has been converted to {convertedData.ToString()}");
+                        logger?.Debug($"{name} : {sourceData.ToString()} has been converted to {convertedData.ToString()}");
                     }
                 } catch (Exception e) {
                     token.Cancel();
                     internalError = e;
-                    logger?.Error($"{name} : failed", e);
+                    logger?.DebugError($"{name} : failed", e);
                 } finally {
                     destinationConveyer.Close();
                 }

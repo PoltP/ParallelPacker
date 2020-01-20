@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace ParallelPacker.Tests {
     public class PackerTests {
-        ILoggable logger = null;// new ConsoleLogger();
+        ILoggable logger = new ConsoleLogger(false);
         CancellationTokenSource token = new CancellationTokenSource();
 
         byte[] PrepareData(int length) {
@@ -65,13 +65,7 @@ namespace ParallelPacker.Tests {
         }
         void RandomDataPackUnpack(int dataLength) {
             byte[] sourceData = PrepareRandomData(dataLength);
-
-            System.Diagnostics.Stopwatch watcher = new System.Diagnostics.Stopwatch();
-            watcher.Start();
-
             byte[] sourceDataAfterPackAndUnpack = PackAndUnpack(sourceData, 1 << 16, Environment.ProcessorCount);
-            watcher.Stop();
-            Console.Write($"Finished in {watcher.Elapsed}");
 
             Assert.Equal(sourceData.Length, sourceDataAfterPackAndUnpack.Length);
             Assert.Equal(sourceData, sourceDataAfterPackAndUnpack);

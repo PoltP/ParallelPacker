@@ -1,9 +1,6 @@
 ﻿using System.Threading;
 
 namespace ParallelPacker.Conveyers {
-    //
-    //  Using Jeffrey Richter's "condition variable pattern"   
-    //
     public class LockableConveyer<T> : ConveyerBase<T> {
         readonly object lockableObject = new object();
 

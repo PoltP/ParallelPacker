@@ -16,19 +16,13 @@ namespace ParallelPacker.Workers {
             } else {
                 enumerator = BinaryBlockReader.CreatePackedBlocksEnumerator(reader, blocksNumber);
             }         
-            IGettableConveyer<Block> srcConveyer = new GetOnlyConveyer<Block>(() => {
-                if (enumerator.MoveNext()) {
-                    return enumerator.Current;
-                }
-                return null;
-            });
+            IGettableConveyer<Block> srcConveyer = new GetOnlyConveyer<Block>(() =>  enumerator.MoveNext() ? enumerator.Current : null);
             return new Worker<Block, Block>("Source", srcConveyer, puttableConveyer, logger, block => block);
         }
 
-        public static Worker<Block, Block> CreatePackerWorker(int index, PackerMode packerMode,
+        public static Worker<Block, Block> CreatePackerWorker(int index, PackerMode packerMode, IPackable packable,
                 IGettableConveyer<Block> gettableConveyer, IPuttableConveyer<Block> puttableConveyer, ILoggable logger) {
 
-            IPackable packable = new GZipPacker();
             Convert<Block, Block> convert;
             if (packerMode == PackerMode.Pack) {
                 convert = sourceBlock => new Block(sourceBlock.Index, packable.Pack(sourceBlock.Data));

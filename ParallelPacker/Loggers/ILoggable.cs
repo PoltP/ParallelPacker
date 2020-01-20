@@ -2,7 +2,8 @@
 
 namespace ParallelPacker.Loggers {
     public interface ILoggable {
-        void Write(string message);
-        void Error(string message, Exception exception);
+        void LogMessage(string message, bool currentLine = false);
+        void Debug(string message);
+        void DebugError(string message, Exception exception);
     }
 }

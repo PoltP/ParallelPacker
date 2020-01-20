@@ -8,8 +8,6 @@ namespace ParallelPacker.Conveyers {
         readonly Queue<T> queue = new Queue<T>();
         int puttableWorkersNumber;
 
-        protected Queue<T> InternalQueue { get { return queue; } }
-
         protected bool HasItems { get { return queue.Count > 0; } }
 
         protected bool HasPuttableWorkers { get { return puttableWorkersNumber > 0; } }
