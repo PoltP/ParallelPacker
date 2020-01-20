@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Loggers\" />
+    <Folder Include="Blocks\" />
+    <Folder Include="Exceptions\" />
+    <Folder Include="Conveyers\" />
+    <Folder Include="Settings\" />
+    <Folder Include="Workers\" />
+    <Folder Include="PackerEngines\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Conveyers\EmptyInterface.cs" />
+    <Compile Remove="Workers\CompressedSourceReader.cs" />
+    <Compile Remove="Workers\DestinationWriter.cs" />
+    <Compile Remove="Workers\SourceReader.cs" />
+    <Compile Remove="Workers\BlockUnpacker.cs" />
+  </ItemGroup>
+</Project>

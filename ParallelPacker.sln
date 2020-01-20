@@ -1,0 +1,28 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallelPacker", "ParallelPacker\ParallelPacker.csproj", "{AABE7B41-1F3E-4BCA-B118-5185C5DEE4F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParallelPacker.Tests", "ParallelPacker.Tests\ParallelPacker.Tests.csproj", "{82DC90A0-ACA6-428D-B114-0E76E67D1379}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{15A1F8CC-412A-4692-9C4C-FCEB3A22C8F9}"
+	ProjectSection(SolutionItems) = preProject
+		Readme.md = Readme.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AABE7B41-1F3E-4BCA-B118-5185C5DEE4F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AABE7B41-1F3E-4BCA-B118-5185C5DEE4F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AABE7B41-1F3E-4BCA-B118-5185C5DEE4F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AABE7B41-1F3E-4BCA-B118-5185C5DEE4F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82DC90A0-ACA6-428D-B114-0E76E67D1379}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82DC90A0-ACA6-428D-B114-0E76E67D1379}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82DC90A0-ACA6-428D-B114-0E76E67D1379}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82DC90A0-ACA6-428D-B114-0E76E67D1379}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,7 @@
+ParallelPacker.Tests/bin
+ParallelPacker.Tests/obj
+ParallelPacker/bin
+ParallelPacker/obj
+.vs
+---TEST---*
+---TEST-OLD---*
