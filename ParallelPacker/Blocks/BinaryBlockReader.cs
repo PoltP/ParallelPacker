@@ -23,10 +23,10 @@ namespace ParallelPacker.Blocks {
             int blockIndex = 0;
             bool isFinished = false;
             while (!isFinished) {
-                int totalLength = (int)(reader.BaseStream.Length - reader.BaseStream.Position);
+                long totalLength = reader.BaseStream.Length - reader.BaseStream.Position;
                 isFinished = totalLength <= blockLength;
 
-                byte[] data = reader.ReadBytes(isFinished ? totalLength : blockLength);
+                byte[] data = reader.ReadBytes(isFinished ? (int)totalLength : blockLength);
                 yield return new Block(blockIndex++, data);
             }
         }
