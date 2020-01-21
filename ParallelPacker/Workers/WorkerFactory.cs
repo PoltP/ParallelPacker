@@ -20,7 +20,7 @@ namespace ParallelPacker.Workers {
             return new Worker<Block, Block>("Source", srcConveyer, puttableConveyer, logger, block => block);
         }
 
-        public static Worker<Block, Block> CreatePackerWorker(int index, PackerMode packerMode, IPackable packable,
+        public static Worker<Block, Block> CreatePackerWorker(int index, PackerMode packerMode, IPackerEngine packable,
                 IGettableConveyer<Block> gettableConveyer, IPuttableConveyer<Block> puttableConveyer, ILoggable logger) {
 
             Convert<Block, Block> convert;

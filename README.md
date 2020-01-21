@@ -32,4 +32,4 @@ ParallelPacker pack/unpack [source file path] [result file path]
 2) При сохранении упакованного файла блоки не упорядочены по индексу. Можно реализовать Min Heap (очередь с приоритетом) по индексу блока и не записывать, пока не придёт следующий.
 
 ## Комментарии
-Библиотеку можно обобщить не только на случай упаковки другим архиватором (для этого достаточно реализовать [IPackable](https://github.com/pp-chain/ParallelPacker/blob/master/ParallelPacker/PackerEngines/IPackable.cs)), но и на любой случай распараллеливания, подходящий под схему процесса ParallelPacker
+Библиотеку можно обобщить не только на случай упаковки другим архиватором (для этого достаточно реализовать [IPackerEngine](https://github.com/pp-chain/ParallelPacker/blob/master/ParallelPacker/PackerEngines/IPackerEngine.cs)), но и на любой случай распараллеливания, подходящий под схему процесса ParallelPacker
