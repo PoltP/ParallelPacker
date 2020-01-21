@@ -6,20 +6,26 @@ using System.Threading;
 using ParallelPacker.Blocks;
 using ParallelPacker.Conveyers;
 using ParallelPacker.Loggers;
+using ParallelPacker.PackerEngines;
 using ParallelPacker.Settings;
 using ParallelPacker.Workers;
 
 namespace ParallelPacker {
     public static class Packer {
-        public static int Run(Parameters parameters, CancellationTokenSource token, ILoggable logger) {
-            using (BinaryReader sourceReader = new BinaryReader(parameters.SourceFileInfo.OpenRead())) {
-                using (BinaryWriter destinationWriter = new BinaryWriter(parameters.DestinationFileInfo.OpenWrite())) {
-                    return Run(sourceReader, destinationWriter, parameters.PackerMode, parameters.BlockLength,
-                        parameters.ParallelismDegree, token, logger);
+        public static int Run(Parameters parameters, CancellationTokenSource token, IPackerEngine packer, ILoggable logger) {
+                return Run(parameters.SourceFileInfo.OpenRead(), parameters.DestinationFileInfo.OpenWrite(), packer, parameters.PackerMode,
+                    parameters.BlockLength, parameters.ParallelismDegree, token, logger);
+        }
+        public static int Run(Stream source, Stream destination, IPackerEngine packer, PackerMode packerMode,
+                int blockLength, int parallelismDegree, CancellationTokenSource token, ILoggable logger) {
+            using (BinaryReader sourceReader = new BinaryReader(source)) {
+                using (BinaryWriter destinationWriter = new BinaryWriter(destination)) {
+                    return Run(sourceReader, destinationWriter, packer, packerMode,
+                        blockLength, parallelismDegree, token, logger);
                 }
             }
         }
-        public static int Run(BinaryReader sourceReader, BinaryWriter destinationWriter,
+        static int Run(BinaryReader sourceReader, BinaryWriter destinationWriter, IPackerEngine packer,
                 PackerMode packerMode, int blockLength, int parallelismDegree, CancellationTokenSource token, ILoggable logger) {
 
             int blocksNumber = (int)Math.Ceiling((double)sourceReader.BaseStream.Length / blockLength);
@@ -40,7 +46,7 @@ namespace ParallelPacker {
                     WorkerFactory.CreateDestinationWorker(destinationWriter, blocksNumber, blockLength, packerMode, commonDestinationConveyer, logger)
                 };
                 for (int index = 1; index <= parallelismDegree; ++index) {
-                    workers.Add(WorkerFactory.CreatePackerWorker(index, packerMode, new GZipPacker(), commonSourceConveyer, commonDestinationConveyer, logger));
+                    workers.Add(WorkerFactory.CreatePackerWorker(index, packerMode, packer, commonSourceConveyer, commonDestinationConveyer, logger));
                 }
 
                 Worker<Block, Block>.DoWork(workers, token);
@@ -58,8 +64,7 @@ namespace ParallelPacker {
 
             } catch(Exception e) {
                 watcher.Stop();
-                logger?.LogMessage($"{packerMode}ing finished with ERRORS in {watcher.Elapsed}:");
-                logger?.LogMessage($"{e.Message}");
+                logger?.LogError($"{packerMode}ing finished with ERRORS in {watcher.Elapsed}:", e);
                 return 1;
             }
         }

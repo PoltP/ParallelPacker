@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using ParallelPacker.Loggers;
+using ParallelPacker.PackerEngines;
 using ParallelPacker.Settings;
 
 namespace ParallelPacker {
@@ -12,10 +13,10 @@ namespace ParallelPacker {
                 e.Cancel = true;
                 cancellationTokenSource.Cancel();
             };
-
+ 
             Parameters parameters = Parameters.Setup(args);
             if (parameters != null) {   
-                Packer.Run(parameters, cancellationTokenSource, new ConsoleLogger());
+                Packer.Run(parameters, cancellationTokenSource, new GZipPacker(), new ConsoleLogger());
             }
         }
     }

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.IO.Compression;
 
-namespace ParallelPacker.Blocks {
+namespace ParallelPacker.PackerEngines {
     public class GZipPacker : IPackerEngine {
         byte[] IPackerEngine.Pack(byte[] data) {
             using (MemoryStream packedStream = new MemoryStream(data.Length)) {

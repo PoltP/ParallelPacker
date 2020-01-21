@@ -17,6 +17,14 @@ namespace ParallelPacker.Loggers {
             }
         }
 
+        void ILoggable.LogError(string errorMessage, Exception exception) {
+            ConsoleColor fgConsoleColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.DarkRed; 
+            Console.WriteLine(errorMessage);
+            Console.WriteLine($"{exception.Message}");
+            Console.ForegroundColor = fgConsoleColor;
+        }
+
         void ILoggable.DebugError(string message, Exception exception) {
             if (!allowDebugging) return;
             Console.WriteLine($"[ERROR] {message} : {exception?.Message}");

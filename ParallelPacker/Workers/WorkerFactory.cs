@@ -3,6 +3,7 @@ using System.IO;
 using ParallelPacker.Blocks;
 using ParallelPacker.Conveyers;
 using ParallelPacker.Loggers;
+using ParallelPacker.PackerEngines;
 using ParallelPacker.Settings;
 
 namespace ParallelPacker.Workers {
@@ -20,14 +21,14 @@ namespace ParallelPacker.Workers {
             return new Worker<Block, Block>("Source", srcConveyer, puttableConveyer, logger, block => block);
         }
 
-        public static Worker<Block, Block> CreatePackerWorker(int index, PackerMode packerMode, IPackerEngine packable,
+        public static Worker<Block, Block> CreatePackerWorker(int index, PackerMode packerMode, IPackerEngine packerEngine,
                 IGettableConveyer<Block> gettableConveyer, IPuttableConveyer<Block> puttableConveyer, ILoggable logger) {
 
             Convert<Block, Block> convert;
             if (packerMode == PackerMode.Pack) {
-                convert = sourceBlock => new Block(sourceBlock.Index, packable.Pack(sourceBlock.Data));
+                convert = sourceBlock => new Block(sourceBlock.Index, packerEngine.Pack(sourceBlock.Data));
             } else {
-                convert = sourceBlock => new Block(sourceBlock.Index, packable.Unpack(sourceBlock.Data));
+                convert = sourceBlock => new Block(sourceBlock.Index, packerEngine.Unpack(sourceBlock.Data));
             }
             return new Worker<Block, Block>($"{packerMode.ToString()}ing #{index}", gettableConveyer, puttableConveyer, logger, convert);
         }
