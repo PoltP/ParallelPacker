@@ -9,7 +9,7 @@ namespace ParallelPacker.Loggers {
         }
 
         void ILoggable.LogMessage(string logMessage, bool currentLine) {
-            string message = $"|  {logMessage}";
+            string message = $"{logMessage}";
             if (currentLine) {
                 Console.Write(message);
             } else {

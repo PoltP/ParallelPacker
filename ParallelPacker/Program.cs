@@ -13,14 +13,9 @@ namespace ParallelPacker {
                 cancellationTokenSource.Cancel();
             };
 
-            ILoggable logger = new ConsoleLogger();
-            Parameters parameters = Parameters.Parse(args);
+            Parameters parameters = Parameters.Setup(args);
             if (parameters != null) {   
-                Packer.Run(parameters, cancellationTokenSource, logger);
-            } else {
-                logger.LogMessage("Input parameters are incorrect, use one of the following forms:");
-                logger.LogMessage("   ParallelPacker compress/decompress [source file path] [result file path]");
-                logger.LogMessage("   ParallelPacker pack/unpack [source file path] [result file path]");
+                Packer.Run(parameters, cancellationTokenSource, new ConsoleLogger());
             }
         }
     }

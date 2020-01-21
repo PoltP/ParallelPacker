@@ -46,9 +46,14 @@ namespace ParallelPacker {
                 Worker<Block, Block>.DoWork(workers, token);
 
                 watcher.Stop();
-                logger?.LogMessage($"{packerMode}ing has been finished successfully in {watcher.Elapsed}:");
-                logger?.LogMessage($"    total blocks number: {blocksNumber}");
-                logger?.LogMessage($"    raw block length: {blockLength}");
+                if(token.IsCancellationRequested) {
+                    logger?.LogMessage($"{packerMode}ing has been cancelled by user '{Environment.UserName}' after {watcher.Elapsed}");
+                } else {
+                    logger?.LogMessage($"{packerMode}ing has been finished successfully in {watcher.Elapsed}:");
+                    logger?.LogMessage($"    total blocks number: {blocksNumber}");
+                    logger?.LogMessage($"    raw block length: {blockLength}");
+                }
+                
                 return 0;
 
             } catch(Exception e) {
