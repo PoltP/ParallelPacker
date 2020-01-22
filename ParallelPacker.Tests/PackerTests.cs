@@ -4,6 +4,7 @@ using Xunit;
 using ParallelPacker.Settings;
 using System.Threading;
 using ParallelPacker.PackerEngines;
+using ParallelPacker.Exceptions;
 
 namespace ParallelPacker.Tests {
     public class PackerTests {
@@ -65,7 +66,7 @@ namespace ParallelPacker.Tests {
                 packer.PackedChanged -= packedChanged;
 
                 Assert.Single(logger.LoggedErrors);
-                AggregateException aggregateException = logger.LoggedErrors[0] as AggregateException;
+                WorkersAggregateException aggregateException = logger.LoggedErrors[0] as WorkersAggregateException;
                 Assert.Single(aggregateException.InnerExceptions);
                 Assert.Equal(errorMessage, aggregateException.InnerExceptions[0].Message);
             }
@@ -87,7 +88,7 @@ namespace ParallelPacker.Tests {
                 packer.PackedChanged -= packedChanged;
 
                 Assert.Single(logger.LoggedErrors);
-                AggregateException aggregateException = logger.LoggedErrors[0] as AggregateException;
+                WorkersAggregateException aggregateException = logger.LoggedErrors[0] as WorkersAggregateException;
                 Assert.Equal(thrownCounter, aggregateException.InnerExceptions.Count);
             }
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using ParallelPacker.Conveyers;
+using ParallelPacker.Exceptions;
 using ParallelPacker.Loggers;
 
 namespace ParallelPacker.Workers {
@@ -19,7 +20,7 @@ namespace ParallelPacker.Workers {
                 .Where(error => error != null)
                 .ToArray();
             if (errors.Length > 0) {
-                throw new AggregateException(errors);
+                throw new WorkersAggregateException(errors);
             }
         }
 
