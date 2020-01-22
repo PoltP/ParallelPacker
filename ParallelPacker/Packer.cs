@@ -41,7 +41,7 @@ namespace ParallelPacker {
                 var commonSourceConveyer = new LockableConveyer<Block>();
                 var commonDestinationConveyer = new LockableConveyer<Block>();
 
-                var workers = new List<Worker<Block, Block>> {
+                var workers = new List<IWorkable> {
                     WorkerFactory.CreateSourceWorker(sourceReader, blocksNumber, blockLength, packerMode, commonSourceConveyer, logger),
                     WorkerFactory.CreateDestinationWorker(destinationWriter, blocksNumber, blockLength, packerMode, commonDestinationConveyer, logger)
                 };
@@ -49,7 +49,7 @@ namespace ParallelPacker {
                     workers.Add(WorkerFactory.CreatePackerWorker(index, packerMode, packer, commonSourceConveyer, commonDestinationConveyer, logger));
                 }
 
-                Worker<Block, Block>.DoWork(workers, token);
+                WorkerFactory.DoWork(workers, token);
 
                 watcher.Stop();
                 if(token.IsCancellationRequested) {

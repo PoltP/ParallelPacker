@@ -6,8 +6,8 @@
             this.get = get;
         }
 
-        T IGettableConveyer<T>.Get() {
-            return get();
+        T IGettableConveyer<T>.Get(out bool stopped) {
+            return get(out stopped);
         }
     }
 }

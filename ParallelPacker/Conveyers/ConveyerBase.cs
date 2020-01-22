@@ -28,11 +28,9 @@ namespace ParallelPacker.Conveyers {
             queue.Enqueue(item);
         }
 
-        public virtual T Get() {
-            if (queue.Count > 0) {
-                return queue.Dequeue();
-            }
-            return default(T);
+        public virtual T Get(out bool stopped) {
+            stopped = !HasItems;
+            return stopped ? default(T) : queue.Dequeue();
         }
     }
 }

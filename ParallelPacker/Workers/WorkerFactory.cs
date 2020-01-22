@@ -1,13 +1,30 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using ParallelPacker.Blocks;
 using ParallelPacker.Conveyers;
+using ParallelPacker.Exceptions;
 using ParallelPacker.Loggers;
 using ParallelPacker.PackerEngines;
 using ParallelPacker.Settings;
 
 namespace ParallelPacker.Workers {
     public static class WorkerFactory {
+        public static void DoWork(IEnumerable<IWorkable> workers, CancellationTokenSource token) {
+            Thread[] workerThreads = workers.Select(worker => worker.Start(token)).ToArray();
+            foreach (var thread in workerThreads) {
+                thread.Join();
+            }
+            var errors = workers
+                .Select(worker => worker.InternalError)
+                .Where(error => error != null)
+                .ToArray();
+            if (errors.Length > 0) {
+                throw new WorkersAggregateException(errors);
+            }
+        }
+
         public static Worker<Block, Block> CreateSourceWorker(BinaryReader reader, int blocksNumber, int blockLength,
                 PackerMode packerMode, IPuttableConveyer<Block> puttableConveyer, ILoggable logger) {
 
@@ -17,8 +34,11 @@ namespace ParallelPacker.Workers {
             } else {
                 enumerator = BinaryBlockReader.CreatePackedBlocksEnumerator(reader, blocksNumber);
             }         
-            IGettableConveyer<Block> srcConveyer = new GetOnlyConveyer<Block>(() =>  enumerator.MoveNext() ? enumerator.Current : null);
-            return new Worker<Block, Block>("Source", srcConveyer, puttableConveyer, logger, block => block);
+            IGettableConveyer<Block> gettableConveyer = new GetOnlyConveyer<Block>((out bool stopped) => {
+                stopped = !enumerator.MoveNext();
+                return stopped ? null : enumerator.Current;
+            });
+            return new Worker<Block, Block>("Source", gettableConveyer, puttableConveyer, logger, block => block);
         }
 
         public static Worker<Block, Block> CreatePackerWorker(int index, PackerMode packerMode, IPackerEngine packerEngine,

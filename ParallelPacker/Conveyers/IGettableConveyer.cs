@@ -1,7 +1,7 @@
 ﻿namespace ParallelPacker.Conveyers {
-    public delegate T Get<T>();
+    public delegate T Get<T>(out bool stopped);
 
     public interface IGettableConveyer<T> {
-        T Get();
+        T Get(out bool stopped);
     }
 }

@@ -16,13 +16,13 @@ namespace ParallelPacker.Conveyers {
             }
         }
 
-        public override T Get() {
+        public override T Get(out bool stopped) {
             Monitor.Enter(lockableObject);
             try {
                 while (!HasItems && (HasPuttableWorkers || !IsOpenedChanged)) {
                     Monitor.Wait(lockableObject);
                 }
-                return base.Get();
+                return base.Get(out stopped);
             } finally {
                 Monitor.Exit(lockableObject);
             }
