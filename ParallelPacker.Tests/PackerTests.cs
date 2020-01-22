@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using Xunit;
 using ParallelPacker.Settings;
-using ParallelPacker.Loggers;
 using System.Threading;
 using ParallelPacker.PackerEngines;
 
@@ -32,9 +31,26 @@ namespace ParallelPacker.Tests {
         }
 
         [Fact]
+        public void WorkerUserCancel_Test() {
+            var bytes = new byte[] { 10, 20, 30, 40 };
+            using (var sourceStream = new MemoryStream(bytes))
+            using (var destinationStream = new MemoryStream()) {
+                PackerEngineMock packer = new PackerEngineMock();
+                PackerEngineMock.PackedChangedEventHandler packedChanged = (object sender, PackedChangedEventArgs e) => {
+                    token.Cancel();
+                };
+                packer.PackedChanged += packedChanged;
+                Assert.Equal(ExitStatus.CANCEL, Packer.Run(sourceStream, destinationStream, packer, PackerMode.Pack, 1, Environment.ProcessorCount, token, logger));
+                packer.PackedChanged -= packedChanged;
+
+                Assert.Empty(logger.LoggedErrors);
+            }
+        }
+
+        [Fact]
         public void WorkerSingleWorkerError_Test() {
             string errorMessage = "Test";
-            var bytes = new byte[] { 10, 20, 30, 40 };
+            var bytes = new byte[] { 10, 20, 30, 40, 50 };
             using (var sourceStream = new MemoryStream(bytes))
             using (var destinationStream = new MemoryStream()) {
                 int thrownFlag = 0;
@@ -45,7 +61,7 @@ namespace ParallelPacker.Tests {
                     }
                 };
                 packer.PackedChanged += packedChanged;
-                Assert.Equal(1, Packer.Run(sourceStream, destinationStream, packer, PackerMode.Pack, 1, Environment.ProcessorCount, token, logger));
+                Assert.Equal(ExitStatus.ERROR, Packer.Run(sourceStream, destinationStream, packer, PackerMode.Pack, 1, Environment.ProcessorCount, token, logger));
                 packer.PackedChanged -= packedChanged;
 
                 Assert.Single(logger.LoggedErrors);
@@ -67,7 +83,7 @@ namespace ParallelPacker.Tests {
                     throw new UnauthorizedAccessException();
                 };
                 packer.PackedChanged += packedChanged;
-                Assert.Equal(1, Packer.Run(sourceStream, destinationStream, packer, PackerMode.Pack, 1, Environment.ProcessorCount, token, logger));
+                Assert.Equal(ExitStatus.ERROR, Packer.Run(sourceStream, destinationStream, packer, PackerMode.Pack, 1, Environment.ProcessorCount, token, logger));
                 packer.PackedChanged -= packedChanged;
 
                 Assert.Single(logger.LoggedErrors);
@@ -107,11 +123,11 @@ namespace ParallelPacker.Tests {
             using (var sourceStream = new MemoryStream(sourceData))
             using (var destinationStream = new MemoryStream()) {
                 IPackerEngine packer = new GZipPacker();
-                Assert.Equal(0, Packer.Run(sourceStream, destinationStream, packer, PackerMode.Pack, blockLength, parallelismDegree, token, logger));
+                Assert.Equal(ExitStatus.SUCCESS, Packer.Run(sourceStream, destinationStream, packer, PackerMode.Pack, blockLength, parallelismDegree, token, logger));
 
                 using (var sourceStream2 = new MemoryStream(destinationStream.ToArray()))
                 using (var destinationStream2 = new MemoryStream()) {
-                    Assert.Equal(0, Packer.Run(sourceStream2, destinationStream2, packer, PackerMode.Unpack, blockLength, parallelismDegree, token, logger));
+                    Assert.Equal(ExitStatus.SUCCESS, Packer.Run(sourceStream2, destinationStream2, packer, PackerMode.Unpack, blockLength, parallelismDegree, token, logger));
                     return destinationStream2.ToArray();
                 }
             }

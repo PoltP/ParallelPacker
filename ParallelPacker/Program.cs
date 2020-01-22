@@ -15,9 +15,11 @@ namespace ParallelPacker {
             };
  
             Parameters parameters = Parameters.Setup(args);
-            if (parameters != null) {   
-                Packer.Run(parameters, cancellationTokenSource, new GZipPacker(), new ConsoleLogger());
+            if (parameters != null) {
+                ExitStatus exitStatus = Packer.Run(parameters, cancellationTokenSource, new GZipPacker(), new ConsoleLogger());
+                Environment.Exit(exitStatus.ToInteger());
             }
+            Environment.Exit(ExitStatus.ERROR.ToInteger());
         }
     }
 }

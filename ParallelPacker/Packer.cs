@@ -12,11 +12,11 @@ using ParallelPacker.Workers;
 
 namespace ParallelPacker {
     public static class Packer {
-        public static int Run(Parameters parameters, CancellationTokenSource token, IPackerEngine packer, ILoggable logger) {
+        public static ExitStatus Run(Parameters parameters, CancellationTokenSource token, IPackerEngine packer, ILoggable logger) {
                 return Run(parameters.SourceFileInfo.OpenRead(), parameters.DestinationFileInfo.OpenWrite(), packer, parameters.PackerMode,
                     parameters.BlockLength, parameters.ParallelismDegree, token, logger);
         }
-        public static int Run(Stream source, Stream destination, IPackerEngine packer, PackerMode packerMode,
+        public static ExitStatus Run(Stream source, Stream destination, IPackerEngine packer, PackerMode packerMode,
                 int blockLength, int parallelismDegree, CancellationTokenSource token, ILoggable logger) {
             using (BinaryReader sourceReader = new BinaryReader(source)) {
                 using (BinaryWriter destinationWriter = new BinaryWriter(destination)) {
@@ -25,7 +25,7 @@ namespace ParallelPacker {
                 }
             }
         }
-        static int Run(BinaryReader sourceReader, BinaryWriter destinationWriter, IPackerEngine packer,
+        static ExitStatus Run(BinaryReader sourceReader, BinaryWriter destinationWriter, IPackerEngine packer,
                 PackerMode packerMode, int blockLength, int parallelismDegree, CancellationTokenSource token, ILoggable logger) {
 
             int blocksNumber = (int)Math.Ceiling((double)sourceReader.BaseStream.Length / blockLength);
@@ -54,18 +54,18 @@ namespace ParallelPacker {
                 watcher.Stop();
                 if(token.IsCancellationRequested) {
                     logger?.LogMessage($"{packerMode}ing has been cancelled by user '{Environment.UserName}' after {watcher.Elapsed}");
+                    return ExitStatus.CANCEL;
                 } else {
                     logger?.LogMessage($"{packerMode}ing has been finished successfully in {watcher.Elapsed}:");
                     logger?.LogMessage($"    total blocks number: {blocksNumber}");
                     logger?.LogMessage($"    raw block length: {blockLength}");
+                    return ExitStatus.SUCCESS;
                 }
-                
-                return 0;
 
             } catch(Exception e) {
                 watcher.Stop();
                 logger?.LogError($"{packerMode}ing finished with ERRORS in {watcher.Elapsed}:", e);
-                return 1;
+                return ExitStatus.ERROR;
             }
         }
     }

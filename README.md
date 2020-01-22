@@ -4,6 +4,11 @@ ParallelPacker compress/decompress [source file path] [result file path]
 
 ParallelPacker pack/unpack [source file path] [result file path]
 
+Возвращает значение ExitCode:
+0 - завершено успешно,
+1 - прервано из-за возникших ошибок в процессе выполнения,
+2 - отменено пользователем
+
 **Платформа**: .NET Core 3.0
 
 ## О задаче:
